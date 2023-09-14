@@ -6,7 +6,7 @@ const path = require('path'); // Import the path module if not already imported
 
 router.get('/vehicles', async (req, res) => {
   try {
-    const numberPlate = 'ABC123'; // Replace with the desired number plate
+    const numberPlate = 'MH12AB1234'; // Replace with the desired number plate
     const [pollutionResult, taxResult, insuranceResult] = await Promise.all([
       Vehicle.checkPollutionToday(numberPlate),
       Vehicle.checkTaxToday(numberPlate),
@@ -24,9 +24,20 @@ router.get('/vehicles', async (req, res) => {
   }
 });
 
+router.get('/check', async (req, res) => {
+  try {
+    const numberPlate = 'MH12AB1234'; // Replace with the desired number plate
+    const violationData = await Vehicle.getViolationsByNumberPlate(numberPlate);
+
+  } catch (error) {
+    console.error('Error giving ViolationDB data : ', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 router.get('/generate-pdf', async (req, res) => {
   try {
-    const numberPlate = 'ABC123'; // Replace with the desired number plate
+    const numberPlate = 'MH12AB1234'; // Replace with the desired number plate
     const violationData = await Vehicle.getViolationsByNumberPlate(numberPlate);
 
     if (violationData.length === 0) {

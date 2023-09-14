@@ -79,42 +79,31 @@ checkInsuranceToday: (number_plate) => {
   });
 },
 
-getViolationsByNumberPlate: async (numberPlate) => {
+getViolationsByNumberPlate: (numberPlate) => {
   try {
+    console.log(numberPlate);
+    console.log("\n\n");
+
     // Step 1: Get the vehicle_id from the Vehicles table based on the number plate
-    const rows = await db.all('SELECT vehicle_id FROM vehicles WHERE number_plate = ?', [numberPlate]);
-    
-    if (rows.length === 0) {
-      // No vehicle found for the given number plate
-      console.log(`Vehicle not found for number plate: ${numberPlate}`);
-      return [];
-    }
+    db.get('SELECT vehicle_id FROM vehicles WHERE number_plate = ?', [numberPlate], (err, row) => {
+      if (err) {
+        return console.error(err.message);
+      }
+      return row
+        ? console.log(row.vehicle_id)
+        : console.log(`No vehicle found with the id : ${numberPlate}`);
+    });
 
-    console.log(rows)
-    
-    // Access the vehicle_id from the first row (assuming one match)
-    const vehicleId = rows[0].vehicle_id;
-    console.log(`Found vehicle ID for number plate ${numberPlate}: ${vehicleId}`);
 
-    // Step 2: Get violations associated with the retrieved vehicle_id
-    const violations = await db.all('SELECT * FROM violations WHERE vehicle_id = ?', [vehicleId]);
-    
-    if (violations.length === 0) {
-      // No violations found for the given vehicle_id
-      console.log(`No violations found for vehicle ID: ${vehicleId}`);
-      return [];
-    }
-    
-    console.log(`Violations for vehicle ID ${vehicleId}:`);
-    console.log(violations);
+    return numberPlate;
 
-    // Return the violations array
-    return violations;
+
   } catch (error) {
     console.error(error);
     throw error;
   }
 }
+
 
 
     
